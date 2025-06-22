@@ -111,7 +111,10 @@ function updateDialRim(start, end) {
 
     if (remaining_min < 0) {
         remaining_min = 0;
+    } else if (remaining_min > 999) {
+        remaining_min = 999;
     }
+
     // convert remaining time to percentage
     var progress_percentage_remaining = (remaining_min / (end_min_total - start_min_total)) * 100;
     if (progress_percentage_remaining > 100) {

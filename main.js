@@ -19,16 +19,6 @@ const createWindow = () => {
   win.loadFile('index.html')
 }
 
-app.whenReady().then(() => {
-  createWindow();
-});
-
-
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
-})
-
 // timetable parsing
     // convert from UTC to AEST
     function formatDateToAEST(date) {
@@ -67,11 +57,25 @@ app.on('window-all-closed', () => {
         const teacher = descriptionLines[0].split(': ')[1] || '';
         const period = descriptionLines[1]?.split(': ')[1] || '';
 
+        // extract room from the location
+        const locationSplit = event.location.split(': ')
+        const room = locationSplit[1] || '';
+
+
         console.log(
             'Class: ' + event.summary +
+            '\nRoom: ' + room +
             '\nPeriod: ' + period +
             '\nStart Time: ' + startTime +
             '\nEnd Time: ' + endTime +
             '\n'
         );
-    };
+    }
+
+app.whenReady().then(() => {
+  createWindow();
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
