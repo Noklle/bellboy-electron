@@ -44,6 +44,9 @@ const createWindow = () => {
     for (const event of Object.values(events)) {
         if (event.type !== 'VEVENT') continue;
 
+        // extract weekday
+        const weekDay = event.start.toLocaleDateString('en-AU', { weekday: 'long' });
+
         // run the time zone conversion on the times
         const startAEST = formatDateToAEST(event.start);
         const endAEST = formatDateToAEST(event.end);
@@ -61,13 +64,13 @@ const createWindow = () => {
         const locationSplit = event.location.split(': ')
         const room = locationSplit[1] || '';
 
-
         console.log(
             'Class: ' + event.summary +
             '\nRoom: ' + room +
             '\nPeriod: ' + period +
             '\nStart Time: ' + startTime +
             '\nEnd Time: ' + endTime +
+            '\nDay: ' + weekDay +
             '\n'
         );
     }
