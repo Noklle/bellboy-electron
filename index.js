@@ -141,6 +141,7 @@ function updateDialRim(start, end) {
     var dialCentreElement = document.getElementById("dialCentre");
     if (dialCentreElement) dialCentreElement.innerHTML = remaining_min_str;
     console.log("Remaining minutes: " + remaining_min_str);
+
 }
 
 function dialRimTimer() {
