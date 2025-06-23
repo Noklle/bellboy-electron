@@ -8,8 +8,9 @@
     <div class="topBar">
         <p style="float: left;">Bellboy</p>
         <div>
-            <button id="uploadBtn" onclick="document.getElementById('ttblupload').click()" style="float: right; margin-right: 50px;">Upload timetable</button>
-            <input type="file" id="ttblupload" name="ttblupload" accept=".ics" style="float: right; display: none;" />
+            <!-- <button id="uploadBtn" onclick="document.getElementById('ttblupload').click()" style="float: right; margin-right: 50px;">Upload timetable</button>
+            <input type="file" id="ttblupload" name="ttblupload" accept=".ics" style="float: right; display: none;" /> -->
+            <button type="button" id="loadTTBL" style="float: right; margin-right: 50px;">Load timetable</button>
         </div>
         <a href="src/settings.html"><button class="settingsbtn" id="settingsbtn" type="button" onclick="open_settings()" style="float: right; margin-right: 50px;">Settings</button></a>
         <button class="time24button" id="time24button" type="button" onclick="time24Toggle()" style="float: right;">Time Format</button>

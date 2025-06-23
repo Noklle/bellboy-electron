@@ -10,7 +10,7 @@ var day = 0;
 
 // clock
 function showTime() {
-    //Get current time/date
+    // get current time/date
     date = new Date();
     hour = date.getHours();
     min = date.getMinutes();
@@ -19,7 +19,7 @@ function showTime() {
     day = date.getDate();
     var am_pm = "AM";
     var twelve_hour = hour;
-    //Convert day number to word
+    // convert day number to word
     const days = [
         "Sunday",
         "Monday",
@@ -152,3 +152,13 @@ function dialRimTimer() {
 }
 
 setInterval(dialRimTimer, 1000);
+
+// call timetable process function
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loadTTBL').addEventListener('click', () => {
+        window.electronAPI.requestTimetable();
+        window.electronAPI.onTimetableData((eventsArray) => {
+            console.log('Received timetable data.');
+        });
+    });
+});
