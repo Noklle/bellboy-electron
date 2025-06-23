@@ -103,7 +103,7 @@ const createWindow = () => {
             weekday: 'long',
             });
 
-            // Append week number to weekday
+            // append week number to weekday
             // const weekDay = `${baseWeekday}${weekNum}`;
 
             // extract the start and end times in 24 hour format
@@ -119,19 +119,30 @@ const createWindow = () => {
             const locationSplit = event.location.split(': ')
             const room = locationSplit[1] || '';
 
+            // simplify class name
+            const [code, rest] = event.summary.split(': ')
+            const yearMatch = code.match(/Yr(\d+)/);
+            const year = yearMatch ? yearMatch[1] : '';
+            const subject = rest.replace(/ Yr\d+$/, '');
+
+            // skip events shorter than 5 minutes
+            const durationMs = event.end - event.start;
+            if (durationMs < 5 * 60 * 1000) {
+              continue;
+            }
+
             // store data in an array
             eventsArray.push({
-                Class: event.summary,
+                Class: subject,
                 Room: room,
                 Period: period,
                 Start_Time: startTime,
                 End_Time: endTime,
                 Day: weekDay,
-                Week: weekNum,
-                Date: dateStr
+                Week: weekNum
             });
         }
-        //console.log(eventsArray);
+        //console.log(eventsArray); // used for debugging, ignore
         return eventsArray;
     }
 // frontend timetable request
