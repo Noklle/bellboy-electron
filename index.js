@@ -1,45 +1,38 @@
 setInterval(showTime, 500);
 
-// variables
-var date = new Date();
-var hour = 0;
-var min = 0;
-var sec = 0;
-var month = 0;
-var day = 0;
-
 // persistent variables
 let time24 = localStorage.getItem('time24') === 'true' || false;
 let currentWeek = parseInt(localStorage.getItem('currentWeek')) || 1;
+let globalEvents = [];
+
+const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+];
 
 // clock
 function showTime() {
     // get current time/date
-    date = new Date();
-    hour = date.getHours();
-    min = date.getMinutes();
-    sec = date.getSeconds();
-    month = date.getMonth() + 1;
-    day = date.getDate();
+    const date = new Date();
+    const hour = date.getHours();
+    const min = date.getMinutes();
+    const sec = date.getSeconds();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
     var am_pm = "AM";
     var twelve_hour = hour;
-    // convert day number to word
-    const days = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ];
     
     var weekday = days[date.getDay()];
     
     //12hr format
     if (time24 == false) {
         if (hour >= 13) {
-            twelve_hour = hour -= 12;
+            twelve_hour = hour - 12;
             am_pm = "  PM";
         }
         else if (hour >= 12) {
@@ -59,17 +52,19 @@ function showTime() {
     }
     
     //if the time value is single digit, add a leading zero
-    var zeromin = min < 10 ? "0" + min : min;
-    var zerosec = sec < 10 ? "0" + sec : sec;
+    //var zeromin = min < 10 ? "0" + min : min;
+    //var zerosec = sec < 10 ? "0" + sec : sec;
+    const zeromin = min.toString().padStart(2, '0');
+    const zerosec = sec.toString().padStart(2, '0');
     
     var currentTime = twelve_hour + ":" + zeromin + ":" + zerosec + am_pm;
     var currentDate = weekday + " " + day + "/" + month;
     
-    // Displaying the time
+    // displaying the time
     var clockElement = document.getElementById("clock");
     if (clockElement) clockElement.innerHTML = currentTime;
-    
-    // Displaying the date
+
+    // displaying the date
     var dateElement = document.getElementById("date");
     if (dateElement) dateElement.innerHTML = currentDate;
 }   
@@ -82,13 +77,6 @@ function time24Toggle() {
     localStorage.setItem('time24', time24);
     console.log("24-hour time: " + (time24 ? "Enabled" : "Disabled"));
     showTime();
-}
-
-// change current week
-function changeWeek() {
-    currentWeek = currentWeek === 1 ? 2 : 1;
-    localStorage.setItem('currentWeek', currentWeek);
-    console.log('Current week: ', currentWeek);
 }
 
 // settings button
@@ -157,19 +145,25 @@ function updateDialRim(start, end) {
     var remaining_min_disp_str = remaining_min_disp.toString();
     var dialCentreElement = document.getElementById("dialCentre");
     if (dialCentreElement) dialCentreElement.innerHTML = remaining_min_disp_str;
-    console.log("Remaining minutes: " + remaining_min_disp_str);
+    // console.log("Remaining minutes: " + remaining_min_disp_str);
 
+    //ipcRenderer.send('update-tray', {
+    //    minutes: remaining_min_disp_str,
+    //    isAfterSchool: timeSlot.type === 'after-school'
+    //});
 }
 
 function dialRimTimer() {
-    updateDialRim("0000", "2400");
+    const timeSlot = getCurrentTimeSlot();
+    updateDialRim(timeSlot.start, timeSlot.end);
 }
 
 setInterval(dialRimTimer, 1000);
 
+// draw timetable
 function drawTimetable(eventsArray) {
     const today = new Date();
-    const todayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+    const todayName = today.toLocaleDateString('en-AU', { weekday: 'long' });
 
     if (typeof currentWeek === 'undefined') {
         console.warn('currentWeek is not defined; defaulting to 1');
@@ -215,8 +209,17 @@ function requestAndDrawTimetable() {
     // clear event listeners
     window.electronAPI.onTimetableData((eventsArray) => {
         console.log('Received timetable data.');
+        globalEvents = eventsArray;
         drawTimetable(eventsArray);
     });
+}
+
+// change current week
+function changeWeek() {
+    currentWeek = currentWeek === 1 ? 2 : 1;
+    localStorage.setItem('currentWeek', currentWeek);
+    drawTimetable(globalEvents); 
+    dialRimTimer();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -227,5 +230,116 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAndDrawTimetable(); // auto-run on app launch
 });
 
-function getCurrentEvent() {
+// helper function to calculate minutes from HHMM string
+function timeToMinutes(timeStr) {
+    const hours = parseInt(timeStr.substring(0, 2));
+    const minutes = parseInt(timeStr.substring(2, 4));
+    return hours * 60 + minutes;
+}
+
+// time slot detection with period info
+function getCurrentTimeSlot() {
+    const now = new Date();
+    const currentTime = now.getHours() * 100 + now.getMinutes();
+    const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+    // get and sort todays events
+    const todaysEvents = globalEvents
+        .filter(event => event.Day === currentDay && event.Week === currentWeek)
+        .sort((a, b) => parseInt(a.Start_Time) - parseInt(b.Start_Time));
+
+    // handle no events
+    if (todaysEvents.length === 0) {
+        return {
+            type: 'no-events',
+            periodLabel: "No School Today",
+            room: "",
+            start: "0000",
+            end: "2400"
+        };
+    }
+
+    // find current and adjacent events
+    let prevEvent = null;
+    let nextEvent = null;
+    let currentEvent = null;
+
+    for (const event of todaysEvents) {
+        const start = parseInt(event.Start_Time);
+        const end = parseInt(event.End_Time);
+
+        if (currentTime >= start && currentTime < end) {
+            return {
+                type: 'current-event',
+                periodLabel: `Period ${event.Period}`,
+                className: event.Class,
+                room: event.Room,
+                start: event.Start_Time,
+                end: event.End_Time
+            };
+        }
+
+        if (currentTime >= end) prevEvent = event;
+        if (currentTime < start && !nextEvent) nextEvent = event;
+    }
+
+    // determine time slot type and period label
+    if (prevEvent && nextEvent) {
+        // calculate break duration to determine recess/lunch
+        const breakStart = timeToMinutes(prevEvent.End_Time);
+        const breakEnd = timeToMinutes(nextEvent.Start_Time);
+        const breakDuration = breakEnd - breakStart;
+        
+        return {
+            type: 'break',
+            periodLabel: breakDuration > 30 ? "Lunch" : "Recess",
+            className: "Break",
+            room: "",
+            start: prevEvent.End_Time,
+            end: nextEvent.Start_Time
+        };
+    } else if (!prevEvent && nextEvent) {
+        return {
+            type: 'before-school',
+            periodLabel: "Before School",
+            className: "No Class",
+            room: "",
+            start: "0000",
+            end: nextEvent.Start_Time
+        };
+    } else if (prevEvent && !nextEvent) {
+        return {
+            type: 'after-school',
+            periodLabel: "After School",
+            className: "No Class",
+            room: "",
+            start: prevEvent.End_Time,
+            end: prevEvent.End_Time
+        };
+    }
+
+    return { // fallback
+        type: 'default',
+        periodLabel: "N/A",
+        className: "No Class",
+        room: "",
+        start: "0000",
+        end: "2400"
+    };
+}
+
+// Update both dial rim and period display
+function dialRimTimer() {
+    const timeSlot = getCurrentTimeSlot();
+    updateDialRim(timeSlot.start, timeSlot.end);
+    
+    const periodDisplay = document.getElementById('current-period');
+    if (timeSlot.room === "") {
+        if (periodDisplay) periodDisplay.textContent = timeSlot.periodLabel;
+    } else {
+        if (periodDisplay) periodDisplay.textContent = timeSlot.periodLabel + " - Room " + timeSlot.room;
+    }
+
+    const classDisplay = document.getElementById('current-class');
+    if (classDisplay) classDisplay.textContent = timeSlot.className;
 }

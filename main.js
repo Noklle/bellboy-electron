@@ -1,7 +1,9 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron')
+const { app, Tray, Menu, nativeImage, BrowserWindow, dialog, ipcMain } = require('electron')
 const path = require('node:path')
 const fs = require('fs');
 const ical = require('node-ical');
+
+let tray = null;
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -136,10 +138,10 @@ const createWindow = () => {
                 Class: subject,
                 Room: room,
                 Period: period,
-                Start_Time: startTime,
-                End_Time: endTime,
-                Day: weekDay,
-                Week: weekNum
+                Start_Time: startTime, // HHMM
+                End_Time: endTime, // HHMM
+                Day: weekDay, // full length
+                Week: weekNum // 1 or 2
             });
         }
         //console.log(eventsArray); // used for debugging, ignore
@@ -161,7 +163,3 @@ ipcMain.on('request-timetable', (event) => {
 app.whenReady().then(() => {
   createWindow();
 });
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
-})
