@@ -112,7 +112,7 @@ function updateDialRim(start, end) {
     var remaining_min_disp = remaining_min;
 
     if (remaining_min < 0) {
-        remaining_min = 0;
+        remaining_min_disp = 0;
     } else if (remaining_min > 999) {
         remaining_min_disp = 999;
     }
