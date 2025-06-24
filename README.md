@@ -14,7 +14,7 @@ This app doesn't come packaged (i.e. with an .exe or an installer), so you're go
 7. Create a folder named "timetables" inside the app directory, and place your .ics file in there.
 
 ## How to Run
-1. Repeat step 4 from the installation guide.
+1. Open command prompt in the same way as in step 4 of the installation guide.
 2. Type "npm run start" and press enter. The window will open after a few seconds.
 3. Click "load timetable".
 4. Check if the periods you see correspond to the correct week; if not, click "change week".
