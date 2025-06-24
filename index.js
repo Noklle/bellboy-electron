@@ -138,7 +138,7 @@ function updateDialRim(start, end) {
     ctx.beginPath();
     ctx.arc(50, 50, 40, Math.PI * 1.5, progress_rads_e, true);
     ctx.lineWidth = 20;
-    ctx.strokeStyle = "#008CFF";
+    ctx.strokeStyle = "#fe0003";
     ctx.stroke();
     
     // convert remaining minutes to string and display number
