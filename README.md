@@ -16,5 +16,5 @@ This app doesn't come packaged (i.e. with an .exe or an installer), so you're go
 1. Type cmd in the address bar of the apps root directory.
 2. Type "npm run start". The window will open after a few seconds.
 3. Click "load timetable".
-4. Check if the week is correct; if not, click "change week"/
+4. Check if the periods you see correspond to the correct week; if not, click "change week".
 5. Profit
