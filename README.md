@@ -13,7 +13,7 @@ This app doesn't come packaged (i.e. with an .exe or an installer), so you're go
 7. Place it inside the "timetables" folder inside the app directory, making sure it is named "my_timetable.ics".
 
 ## How to Run
-1. Type cmd in the address bar of the apps root directory.
+1. Repeat step 3 from the installation guide.
 2. Type "npm run start". The window will open after a few seconds.
 3. Click "load timetable".
 4. Check if the periods you see correspond to the correct week; if not, click "change week".
