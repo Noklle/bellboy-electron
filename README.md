@@ -1,6 +1,4 @@
 # Bellboy
-
----
 A handy dandy app for showing you your daily timetable and counting down the minutes.
 
 ## Installation Guide
@@ -22,6 +20,8 @@ After following the above guide, follow these steps at any time to launch the ap
 3. Click "load timetable".
 4. Check if the periods you see correspond to the correct week; if not, click "change week".
 5. Profit
+
+---
 
 ### Note for Teachers
 This app is designed around how the student timetable file is structured. I am unsure of differences in how the teacher timetable works, but I know at the least that there are no study periods to pad out the school day. Therefore, you may encounter minor visual errors such as breaks being incorrectly identified as lunch or recess.
