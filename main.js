@@ -127,9 +127,9 @@ const createWindow = () => {
             const year = yearMatch ? yearMatch[1] : '';
             const subject = rest.replace(/ Yr\d+$/, '');
 
-            // skip events shorter than 5 minutes
+            // skip events shorter than 4 minutes
             const durationMs = event.end - event.start;
-            if (durationMs < 5 * 60 * 1000) {
+            if (durationMs < 4 * 60 * 1000) {
               continue;
             }
 
@@ -144,7 +144,7 @@ const createWindow = () => {
                 Week: weekNum // 1 or 2
             });
         }
-        //console.log(eventsArray); // used for debugging, ignore
+        //console.log(eventsArray); // debug
         return eventsArray;
     }
 // frontend timetable request

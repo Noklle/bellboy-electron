@@ -1,6 +1,6 @@
 setInterval(showTime, 500);
 
-// persistent variables
+// variables
 let time24 = localStorage.getItem('time24') === 'true' || false;
 let currentWeek = parseInt(localStorage.getItem('currentWeek')) || 1;
 let globalEvents = [];
@@ -68,7 +68,6 @@ function showTime() {
     var dateElement = document.getElementById("date");
     if (dateElement) dateElement.innerHTML = currentDate;
 }   
-// call the function
 showTime();
 
 // 24 hour time Button
@@ -82,8 +81,6 @@ function time24Toggle() {
 // settings button
 async function open_settings() {
     console.log("Settings button clicked");
-    // Electron IPC call would go here
-    // Example: ipcRenderer.send('open-settings-window')
 }
 
 //light dark mode button
@@ -230,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAndDrawTimetable(); // auto-run on app launch
 });
 
-// helper function to calculate minutes from HHMM string
+// helper function to calculate minutes
 function timeToMinutes(timeStr) {
     const hours = parseInt(timeStr.substring(0, 2));
     const minutes = parseInt(timeStr.substring(2, 4));
