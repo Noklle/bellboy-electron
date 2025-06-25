@@ -11,6 +11,7 @@ This app doesn't come packaged (i.e. with an .exe or an installer), so you're go
 5. Type "npm install" and press enter. This will install all the dependencies for the app, which you'll need. This may take upwards of a couple minutes.
 6. Go to your Sentral page, export your timetable as an .ics file, and make sure it is named "my_timetable.ics".
 7. Create a folder named "timetables" inside the app directory, and place your .ics file in there.
+
 A proper installer like what you may be used to from professional software is planned for the future.
 
 ## How to Run
